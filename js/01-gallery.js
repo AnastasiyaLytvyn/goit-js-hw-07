@@ -3,25 +3,33 @@ import { galleryItems } from "./gallery-items.js";
 
 // console.log(galleryItems);
 
-// const instance = basicLightbox.create(`
-//     <img src="assets/images/image.png" width="800" height="600">
-// `)
-
-// instance.show()
-
-const paletteContainer = document.querySelector('.gallery');
+const paletteContainer = document.querySelector(".gallery");
 const itemsMarkUp = createGalleryItemsMarkup(galleryItems);
 
-paletteContainer.innerHTML = itemsMarkUp;
+paletteContainer.insertAdjacentHTML("beforeend", itemsMarkUp);
+paletteContainer.addEventListener("click", onImageClick);
 
 function createGalleryItemsMarkup(galleryItems) {
   return galleryItems
     .map(({ preview, original, description }) => {
       return `<div class="gallery__item">
                 <a class="gallery__link" href="${original}">
-                    <img class="gallery__image" src="${preview}" alt="${description}"/>
+                    <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"/>
                 </a>
             </div>`;
     })
-    .join('');
+    .join("");
+}
+
+function onImageClick(event) {
+  event.preventDefault();
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  }
+
+  const instance = basicLightbox.create(`
+    <img src=${event.target.dataset.source}>
+`);
+
+  instance.show();
 }
